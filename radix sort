@@ -83,7 +83,74 @@ static void PrintArray(int Array[], int n);
 
 C Implementation
 ----------------
+#include <stdio.h>
 
+static void radixsort(int Array[], int n);
+static void countsort(int Array[], int n, int place);
+static void PrintArray(int Array[], int n);
+
+  // function for radix sort
+  void radixsort(int Array[], int n) 
+  {
+    int max = Array[0];
+    //find largest element in the Array
+    for (int i=1; i<n; i++) 
+      {  
+        if(max < Array[i])
+           max = Array[i];
+      }
+    //Counting sort is performed based on place. 
+    //like one's place, ten's place and so on..
+    for (int place = 1; max/place > 0; place *= 10) 
+        countsort(Array, n, place); 
+   }
+  static void countsort(int Array[], int n, int place) 
+  {   
+    int output[n];
+    //range of the number is 0-9 for each place considered.
+    int freq[10] = {0};
+    //count number of occurrences in freq array
+    for(int i = 0; i < n; i++)
+      freq[(Array[i]/place)%10]++;
+
+    //Change count[i] so that count[i] now contains actual 
+    //position of this digit in output[] 
+    for (int i = 1; i < 10; i++) 
+        freq[i] += freq[i - 1];    
+
+    //Build the output array 
+    for (int i = n - 1; i >= 0; i--) 
+    { 
+        output[freq[(Array[i]/place)%10] - 1] = Array[i]; 
+        freq[(Array[i]/place)%10]--; 
+    } 
+  
+    //Copy the output array to the input Array, Now the Array will 
+    //contain sorted array based on place's digit
+    for (int i = 0; i < n; i++) 
+        Array[i] = output[i]; 
+  }
+
+  // function to print array
+  static void PrintArray(int Array[], int n) 
+  { 
+    for (int i=0; i<n; i++) 
+      printf("%i ",Array[i]); 
+    printf("\n"); 
+  } 
+
+ // test radix sort code
+ int main (){
+    int MyArray[] = {101, 1, 20, 50, 9, 98, 27, 153, 35, 899};
+    int n = sizeof(MyArray) / sizeof(MyArray[0]); 
+    printf("Original Array\n");
+    PrintArray(MyArray, n);
+
+    radixsort(MyArray, n);
+    printf("\nSorted Array\n");
+    PrintArray(MyArray, n);
+    return 0;
+ }
 
 
 C# Implementation
